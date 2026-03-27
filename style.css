@@ -154,3 +154,28 @@ body {
         bottom: calc(9dvh + env(safe-area-inset-bottom));
     }
 }
+/* =========================================
+   ĐIỀU CHỈNH RESPONSIVE CHO ĐIỆN THOẠI
+========================================= */
+@media screen and (max-width: 768px) {
+    .box {
+        /* Đẩy trái tim lên cao hơn một chút để chừa chỗ cho chữ */
+        top: 40%; 
+        /* Giữ nguyên căn giữa, nhưng thu nhỏ toàn bộ khối trái tim xuống còn 65% */
+        transform: translate(-50%, -50%) scale(0.65); 
+    }
+
+    /* Thu nhỏ chữ lại một chút để không bị tràn màn hình điện thoại */
+    #text-container {
+        font-size: clamp(1.3rem, 5vw, 2rem); 
+        width: 95%;
+        bottom: 15%;
+    }
+}
+
+/* Dành cho các dòng điện thoại rất nhỏ (như iPhone SE) */
+@media screen and (max-width: 380px) {
+    .box {
+        transform: translate(-50%, -50%) scale(0.55); 
+    }
+}
