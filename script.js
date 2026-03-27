@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", function() {
     const textContainer = document.getElementById("text-container");
     const messages = [
-        "Uii ai mà xinh thế này :3", 
+        "Uii ai mà xinh thế này 😍", 
         "Sao trông cậu buồn vậy ?", 
-        "Trông đáng yêu thế mà lại buồn", 
-        "Thôi không sao, có gì muốn nói cứ nói ra đi, tớ sẽ lắng nghe mà !",
-        "Nào vui lên nhaa ❤️"
+        "Trông đáng yêu thế mà lại buồn 😗", 
+        "Thôi không sao •.• có gì muốn tâm sự thì kể tớ này !",
+        "1..2..3 Cười 😝"
     ]; 
     
     let msgIndex = 0;
