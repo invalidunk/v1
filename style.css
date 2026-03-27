@@ -154,28 +154,51 @@ body {
         bottom: calc(9dvh + env(safe-area-inset-bottom));
     }
 }
-/* =========================================
-   ĐIỀU CHỈNH RESPONSIVE CHO ĐIỆN THOẠI
-========================================= */
-@media screen and (max-width: 768px) {
-    .box {
-        /* Đẩy trái tim lên cao hơn một chút để chừa chỗ cho chữ */
-        top: 40%; 
-        /* Giữ nguyên căn giữa, nhưng thu nhỏ toàn bộ khối trái tim xuống còn 65% */
-        transform: translate(-50%, -50%) scale(0.65); 
-    }
+/* ========================================================
+   KÍCH THƯỚC ĐỘC LẬP CHO ĐIỆN THOẠI (KHÓA UI)
+======================================================== */
 
-    /* Thu nhỏ chữ lại một chút để không bị tràn màn hình điện thoại */
+/* Tablet & Mobile màn hình lớn */
+@media screen and (max-width: 768px) {
+    #pinkboard {
+        width: 300px;
+        height: 300px;
+    }
+    
+    /* Thiết kế lại trái tim tĩnh (nền đỏ) cho khớp khung 300x300 */
+    #pinkboard:before, #pinkboard:after {
+        width: 60px;
+        height: 96px;
+        border-top-left-radius: 30px;
+        border-top-right-radius: 30px;
+    }
+    #pinkboard:before { left: 120px; top: 78px; }
+    #pinkboard:after { left: 60px; top: 78px; }
+
     #text-container {
-        font-size: clamp(1.3rem, 5vw, 2rem); 
-        width: 95%;
         bottom: 15%;
+        font-size: clamp(1.2rem, 5vw, 2rem);
     }
 }
 
-/* Dành cho các dòng điện thoại rất nhỏ (như iPhone SE) */
-@media screen and (max-width: 380px) {
-    .box {
-        transform: translate(-50%, -50%) scale(0.55); 
+/* Mobile màn hình nhỏ (ví dụ: iPhone đời cũ) */
+@media screen and (max-width: 400px) {
+    #pinkboard {
+        width: 250px;
+        height: 250px;
+    }
+    
+    /* Thiết kế lại trái tim tĩnh cho khớp khung 250x250 */
+    #pinkboard:before, #pinkboard:after {
+        width: 50px;
+        height: 80px;
+        border-top-left-radius: 25px;
+        border-top-right-radius: 25px;
+    }
+    #pinkboard:before { left: 100px; top: 65px; }
+    #pinkboard:after { left: 50px; top: 65px; }
+
+    #text-container {
+        bottom: 12%;
     }
 }
