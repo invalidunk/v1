@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function() {
     ========================================== */
     var settings = {
         particles: {
-            length:   7000, 
+            length:   6000, 
             duration:   2.5, 
             velocity: 100, 
             effect: -1.2, 
@@ -198,37 +198,58 @@ document.addEventListener("DOMContentLoaded", function() {
                 else if (window.innerWidth <= 768) scale = 0.6; // Mobile/Tablet
                 
                 for (var i = 0; i < amount; i++) {
-    // 1. Lấy góc ngẫu nhiên tạo khung hình trái tim
     var t = Math.PI - 2 * Math.PI * Math.random();
     var pos = basePointOnHeart(t);
     
-    // 2. BÍ QUYẾT LẤP ĐẦY: Kéo hạt từ viền vào bên trong lõi
-    // Dùng Math.sqrt() để phân bố hạt đều khắp diện tích trái tim
-    var fillRatio = Math.sqrt(Math.random());
-    pos.x *= fillRatio;
-    pos.y *= fillRatio;
-    
-    // 3. Áp dụng tỷ lệ scale của thiết bị
-    pos.x *= scale;
-    pos.y *= scale;
+    // BÍ QUYẾT: Giữ lại 20% hạt làm "khung vỏ", 80% còn lại lấp đầy bên trong
+    var isShell = Math.random() < 0.2; // Tỷ lệ: 20% cho vỏ, 80% cho lõi
 
-    // 4. MẤU CHỐT XÓA ĐƯỜNG THẲNG: Tính toán lại hướng bay (dir)
-    // Lúc này hướng bay phải tính theo vị trí MỚI bên trong, thay vì vị trí viền cũ
-    var dir = pos.clone().length(settings.particles.velocity * scale);
+    if (!isShell) {
+        // --- 80% Hạt lấp đầy bên trong (Giữ nguyên logic cũ) ---
+        // Kéo hạt từ viền vào bên trong diện tích
+        var fillRatio = Math.sqrt(Math.random());
+        pos.x *= fillRatio;
+        pos.y *= fillRatio;
+        
+        // Thu nhỏ theo scale màn hình
+        pos.x *= scale;
+        pos.y *= scale;
 
-    // 5. Thêm nhiễu ngẫu nhiên vào vận tốc bay
-    // Lực nhiễu này bẻ lái các hạt, khiến chúng tản ra lơ lửng đan xen vào nhau thay vì đâm thẳng vào tọa độ (0,0)
-    var noise = 40 * scale; 
-    var dx = dir.x + (Math.random() - 0.5) * noise;
-    var dy = dir.y + (Math.random() - 0.5) * noise;
+        // Tính hướng bay từ vị trí mới bên trong
+        var dir = pos.clone().length(settings.particles.velocity * scale);
 
-    // 6. Đưa hạt lên màn hình
-    particles.add(
-        canvas.width / 2 + pos.x, 
-        canvas.height / 2 - pos.y, 
-        dx, 
-        -dy
-    );
+        // Thêm lực nhiễu lớn để các hạt đan xen và lấp đầy khoảng trống (xóa đường kẻ)
+        var noise = 40 * scale; 
+        var dx = dir.x + (Math.random() - 0.5) * noise;
+        var dy = dir.y + (Math.random() - 0.5) * noise;
+
+        particles.add(
+            canvas.width / 2 + pos.x, 
+            canvas.height / 2 - pos.y, 
+            dx, 
+            -dy
+        );
+    } else {
+        // --- 20% Hạt khung vỏ sắc nét ---
+        // Hạt vỏ chỉ bám trên đường viền sắc nét (không có fillRatio)
+        pos.x *= scale;
+        pos.y *= scale;
+
+        // Hướng bay bám sát viền (không có lực nhiễu lớn)
+        var dir = pos.clone().length(settings.particles.velocity * scale);
+
+        // Thêm nhiễu cực nhỏ để viền trông mịn màng
+        var tinyNoise = 5 * scale;
+        var dx = dir.x + (Math.random() - 0.5) * tinyNoise;
+        var dy = dir.y + (Math.random() - 0.5) * tinyNoise;
+
+        particles.add(
+            canvas.width / 2 + pos.x, 
+            canvas.height / 2 - pos.y, 
+            dx, 
+            -dy
+        );
+    }
 }
                 particles.update(deltaTime);
                 particles.draw(context, image);
