@@ -198,24 +198,36 @@ document.addEventListener("DOMContentLoaded", function() {
                 else if (window.innerWidth <= 768) scale = 0.6; // Mobile/Tablet
                 
                 for (var i = 0; i < amount; i++) {
-    // 1. Tính toán điểm trên khung viền trái tim
     var t = Math.PI - 2 * Math.PI * Math.random();
     var pos = basePointOnHeart(t);
     
-    // 2. BÍ QUYẾT LẤP ĐẦY: Phân bố hạt đều khắp bên trong trái tim
-    // Dùng Math.sqrt(Math.random()) để rải hạt phủ kín diện tích từ tâm ra viền
-    var fillRatio = Math.sqrt(Math.random()); 
-    pos.x *= fillRatio * scale;
-    pos.y *= fillRatio * scale;
+    // Tính hướng văng gốc
+    var dir = pos.clone().length(settings.particles.velocity * scale);
 
-    // 3. Vận tốc bay: giảm mạnh tốc độ để hạt trôi lơ lửng từ từ bên trong thay vì lao nhanh
-    var dir = pos.clone().length(settings.particles.velocity * scale * 0.15); 
+    // BÍ QUYẾT: Giữ lại 25% hạt làm "lớp vỏ ngoài", 75% còn lại lấp đầy bên trong
+    var isShell = Math.random() < 0.25; 
 
-    // 4. Thêm độ nhiễu nhỏ để các hạt trông tơi xốp tự nhiên
-    pos.x += (Math.random() - 0.5) * 15 * scale;
-    pos.y += (Math.random() - 0.5) * 15 * scale;
+    if (!isShell) {
+        // Rải đều 75% hạt vào diện tích bên trong lõi
+        var fillRatio = Math.sqrt(Math.random());
+        pos.x *= fillRatio;
+        pos.y *= fillRatio;
 
-    // 5. Đưa hạt vào màn hình
+        // Thêm nhiễu ngẫu nhiên vào hướng bay
+        // Điều này khiến hạt không bay đâm thẳng vào tâm (gây ra đường kẻ) mà sẽ tụ lại tự nhiên
+        dir.x += (Math.random() - 0.5) * 80 * scale;
+        dir.y += (Math.random() - 0.5) * 80 * scale;
+    } else {
+        // Hạt ở lớp vỏ cũng thêm tí xíu nhiễu để viền trông "tơi" và bồng bềnh hơn
+        dir.x += (Math.random() - 0.5) * 15 * scale;
+        dir.y += (Math.random() - 0.5) * 15 * scale;
+    }
+
+    // Áp dụng tỷ lệ scale cho các màn hình (điện thoại/máy tính)
+    pos.x *= scale;
+    pos.y *= scale;
+
+    // Đưa hạt vào canvas
     particles.add(
         canvas.width / 2 + pos.x, 
         canvas.height / 2 - pos.y, 
