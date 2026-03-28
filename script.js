@@ -198,41 +198,36 @@ document.addEventListener("DOMContentLoaded", function() {
                 else if (window.innerWidth <= 768) scale = 0.6; // Mobile/Tablet
                 
                 for (var i = 0; i < amount; i++) {
+    // 1. Lấy góc ngẫu nhiên tạo khung hình trái tim
     var t = Math.PI - 2 * Math.PI * Math.random();
     var pos = basePointOnHeart(t);
     
-    // Tính hướng văng gốc
-    var dir = pos.clone().length(settings.particles.velocity * scale);
-
-    // BÍ QUYẾT: Giữ lại 25% hạt làm "lớp vỏ ngoài", 75% còn lại lấp đầy bên trong
-    var isShell = Math.random() < 0.25; 
-
-    if (!isShell) {
-        // Rải đều 75% hạt vào diện tích bên trong lõi
-        var fillRatio = Math.sqrt(Math.random());
-        pos.x *= fillRatio;
-        pos.y *= fillRatio;
-
-        // Thêm nhiễu ngẫu nhiên vào hướng bay
-        // Điều này khiến hạt không bay đâm thẳng vào tâm (gây ra đường kẻ) mà sẽ tụ lại tự nhiên
-        dir.x += (Math.random() - 0.5) * 80 * scale;
-        dir.y += (Math.random() - 0.5) * 80 * scale;
-    } else {
-        // Hạt ở lớp vỏ cũng thêm tí xíu nhiễu để viền trông "tơi" và bồng bềnh hơn
-        dir.x += (Math.random() - 0.5) * 15 * scale;
-        dir.y += (Math.random() - 0.5) * 15 * scale;
-    }
-
-    // Áp dụng tỷ lệ scale cho các màn hình (điện thoại/máy tính)
+    // 2. BÍ QUYẾT LẤP ĐẦY: Kéo hạt từ viền vào bên trong lõi
+    // Dùng Math.sqrt() để phân bố hạt đều khắp diện tích trái tim
+    var fillRatio = Math.sqrt(Math.random());
+    pos.x *= fillRatio;
+    pos.y *= fillRatio;
+    
+    // 3. Áp dụng tỷ lệ scale của thiết bị
     pos.x *= scale;
     pos.y *= scale;
 
-    // Đưa hạt vào canvas
+    // 4. MẤU CHỐT XÓA ĐƯỜNG THẲNG: Tính toán lại hướng bay (dir)
+    // Lúc này hướng bay phải tính theo vị trí MỚI bên trong, thay vì vị trí viền cũ
+    var dir = pos.clone().length(settings.particles.velocity * scale);
+
+    // 5. Thêm nhiễu ngẫu nhiên vào vận tốc bay
+    // Lực nhiễu này bẻ lái các hạt, khiến chúng tản ra lơ lửng đan xen vào nhau thay vì đâm thẳng vào tọa độ (0,0)
+    var noise = 40 * scale; 
+    var dx = dir.x + (Math.random() - 0.5) * noise;
+    var dy = dir.y + (Math.random() - 0.5) * noise;
+
+    // 6. Đưa hạt lên màn hình
     particles.add(
         canvas.width / 2 + pos.x, 
         canvas.height / 2 - pos.y, 
-        dir.x, 
-        -dir.y
+        dx, 
+        -dy
     );
 }
                 particles.update(deltaTime);
