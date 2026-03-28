@@ -198,16 +198,31 @@ document.addEventListener("DOMContentLoaded", function() {
                 else if (window.innerWidth <= 768) scale = 0.6; // Mobile/Tablet
                 
                 for (var i = 0; i < amount; i++) {
-                    var pos = basePointOnHeart(Math.PI - 2 * Math.PI * Math.random());
-                    
-                    // Thu nhỏ tọa độ hạt (không ảnh hưởng kích thước hạt, chỉ làm hẹp vòng cung)
-                    pos.x *= scale;
-                    pos.y *= scale;
+    // 1. Tính toán điểm trên khung viền trái tim
+    var t = Math.PI - 2 * Math.PI * Math.random();
+    var pos = basePointOnHeart(t);
+    
+    // 2. BÍ QUYẾT LẤP ĐẦY: Phân bố hạt đều khắp bên trong trái tim
+    // Dùng Math.sqrt(Math.random()) để rải hạt phủ kín diện tích từ tâm ra viền
+    var fillRatio = Math.sqrt(Math.random()); 
+    pos.x *= fillRatio * scale;
+    pos.y *= fillRatio * scale;
 
-                    // Giảm gia tốc bay để hạt không văng xa khỏi canvas nhỏ
-                    var dir = pos.clone().length(settings.particles.velocity * scale);
-                    particles.add(canvas.width / 2 + pos.x, canvas.height / 2 - pos.y, dir.x, -dir.y);
-                }
+    // 3. Vận tốc bay: giảm mạnh tốc độ để hạt trôi lơ lửng từ từ bên trong thay vì lao nhanh
+    var dir = pos.clone().length(settings.particles.velocity * scale * 0.15); 
+
+    // 4. Thêm độ nhiễu nhỏ để các hạt trông tơi xốp tự nhiên
+    pos.x += (Math.random() - 0.5) * 15 * scale;
+    pos.y += (Math.random() - 0.5) * 15 * scale;
+
+    // 5. Đưa hạt vào màn hình
+    particles.add(
+        canvas.width / 2 + pos.x, 
+        canvas.height / 2 - pos.y, 
+        dir.x, 
+        -dir.y
+    );
+}
                 particles.update(deltaTime);
                 particles.draw(context, image);
             }
