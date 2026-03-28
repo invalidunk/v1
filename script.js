@@ -42,11 +42,11 @@ document.addEventListener("DOMContentLoaded", function() {
     ========================================== */
     var settings = {
         particles: {
-            length:   6000, 
+            length:   8000, 
             duration:   2.5, 
             velocity: 100, 
             effect: -1.2, 
-            size:      22, 
+            size:      16, 
         },
     };
 
