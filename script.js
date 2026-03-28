@@ -198,47 +198,35 @@ document.addEventListener("DOMContentLoaded", function() {
                 else if (window.innerWidth <= 768) scale = 0.6; // Mobile/Tablet
                 
                 for (var i = 0; i < amount; i++) {
-    // 1. Lấy tọa độ viền gốc
     var t = Math.PI - 2 * Math.PI * Math.random();
     var pos = basePointOnHeart(t);
     
-    // 2. Chia tỷ lệ: 25% hạt làm viền, 75% lấp đầy lõi
-    var isBorder = Math.random() < 0.25;
-
+    // 1. Phân chia 20% làm vỏ sắc nét, 80% lấp đầy lõi
+    var isBorder = Math.random() < 0.2; 
     if (!isBorder) {
-        // Hạt ở lõi: Kéo tọa độ rải đều vào bên trong
-        var fillRatio = Math.sqrt(Math.random());
-        pos.x *= fillRatio;
-        pos.y *= fillRatio;
+        // Rải đều 80% hạt từ tâm ra đến viền
+        var distance = Math.sqrt(Math.random()); 
+        pos.x *= distance;
+        pos.y *= distance;
     }
 
-    // 3. Scale theo màn hình
+    // Áp dụng scale thiết bị
     pos.x *= scale;
     pos.y *= scale;
 
-    var dx, dy;
-    
-    // 4. THAY ĐỔI VẬT LÝ BAY (Xóa đường kẻ ở đây)
-    if (isBorder) {
-        // Lấy hướng văng gốc
-        var dir = pos.clone().length(settings.particles.velocity * scale);
-        
-        // MẤU CHỐT: Cộng thêm góc lệch (angle noise). 
-        // Khi bị hút ngược lại, các hạt viền sẽ bay chéo qua nhau thay vì đâm trực diện vào tâm (0,0)
-        var angle = Math.atan2(dir.y, dir.x) + (Math.random() - 0.5) * 1.5; 
-        var speed = settings.particles.velocity * scale;
-        dx = Math.cos(angle) * speed;
-        dy = Math.sin(angle) * speed;
-    } else {
-        // Hạt ở lõi: Bay lơ lửng, chuyển động tản mạn mọi hướng
-        // Tuyệt đối không bay theo tâm nữa
-        var randomAngle = Math.random() * Math.PI * 2;
-        var driftSpeed = Math.random() * 35 * scale;
-        dx = Math.cos(randomAngle) * driftSpeed;
-        dy = Math.sin(randomAngle) * driftSpeed;
-    }
+    // 2. MẤU CHỐT SỬA LỖI: Nhịp đập đồng bộ
+    // Vận tốc bay (dx, dy) được nhân trực tiếp với tọa độ (pos.x, pos.y).
+    // Giúp cả khối lõi và vỏ cùng nở ra và co lại đồng đều, không bị rỗng hay tách rời.
+    var beatStrength = 0.5; 
+    var dx = pos.x * beatStrength; 
+    var dy = pos.y * beatStrength;
 
-    // 5. Thêm hạt lên màn hình
+    // 3. Thêm nhiễu: Vỏ ít nhiễu để giữ nét, lõi nhiều nhiễu để tơi xốp lấp đầy khoảng trống
+    var noise = isBorder ? 2 : 12; 
+    dx += (Math.random() - 0.5) * noise * scale;
+    dy += (Math.random() - 0.5) * noise * scale;
+
+    // 4. Đưa hạt vào màn hình
     particles.add(
         canvas.width / 2 + pos.x, 
         canvas.height / 2 - pos.y, 
