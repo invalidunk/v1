@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function() {
             duration:   2.5, 
             velocity: 100, 
             effect: -1.2, 
-            size:      16, 
+            size:      25, 
         },
     };
 
